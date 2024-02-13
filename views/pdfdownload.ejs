@@ -67,7 +67,7 @@
 
 <script>
     document.querySelector(".download-chart").addEventListener("click", async (req, res) => {
-        fetch("http://localhost:3000/pdfhistory")
+        fetch("/pdfhistory")
             .then(response => {
                 return response.blob()
             })
