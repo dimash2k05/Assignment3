@@ -143,7 +143,8 @@ app.post("/auth", async function (req, res) {
                 admin: false
             });
             console.log("User created successfully");
-            res.render("leaflet", {auth: true});
+            const result = await Auth.find().lean();
+            res.render("admin", {users: result});
         }
     } catch (err) {
         console.error('Error creating user:', err);
