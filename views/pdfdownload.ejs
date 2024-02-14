@@ -49,15 +49,61 @@
         <tbody>
         <tr>
             <th>Истории запросов</th>
-            <th>Username</th>
-            <th>Creation Date</th>
-            <th>Update Date</th>
-            <th>Deletion Date</th>
-            <th>Admin</th>
             <th>
-                <button class="download-chart">download</button>
+                <button class="download-chart" data-type = "userHistory">download</button>
             </th>
         </tr>
+        <tr>
+            <th>Список пользователей</th>
+            <th>
+                <button class="download-chart" data-type = "userList">download</button>
+            </th>
+        </tr>
+        <tr>
+            <th>Графики</th>
+            <th>
+                <button class="download-chart" data-type = "charts">download</button>
+            </th>
+        </tr>
+
+
+
+
+
+
+        <tr>
+            <th>Список игр по странам</th>
+            <th>
+                <button class="download-chart" data-type = "countryCount">download</button>
+            </th>
+        </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+        <tr>
+            <th>Список игр по истории</th>
+            <th>
+                <button class="download-chart" data-type = "historyCount">download</button>
+            </th>
+        </tr>
+
+        <tr>
+            <th>Список историй</th>
+            <th>
+                <button class="download-chart" data-type = "historyList">download</button>
+            </th>
+        </tr>
+
+
         </tbody>
     </table>
     <!-- Modal -->
@@ -66,12 +112,32 @@
 </body>
 
 <script>
-    document.querySelector(".download-chart").addEventListener("click", async (req, res) => {
-        fetch("/pdfhistory")
-            .then(response => {
-                return response.blob()
-            })
-            .then(blob => {
+
+
+
+
+
+
+    for (let i = 0; i < Array.from(document.querySelectorAll(".download-chart")).length; i++) {
+
+
+
+
+
+
+        Array.from(document.querySelectorAll(".download-chart"))[i].addEventListener("click", async (req, res) => {
+            console.log(Array.from(document.querySelectorAll(".download-chart"))[i].dataset)
+            const options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            fetch("/pdfhistory?type=" + Array.from(document.querySelectorAll(".download-chart"))[i].dataset.type)
+                .then(response => {
+                    return response.blob()
+                })
+                .then(blob => {
                     // Create a temporary URL for the blob
                     const url = URL.createObjectURL(blob);
                     // Create a link element
@@ -89,6 +155,7 @@
                     // Revoke the temporary URL to release memory resources
                     URL.revokeObjectURL(url);
                 })
-            })
+        })
+    }
 </script>
 </html>

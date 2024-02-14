@@ -2,17 +2,18 @@
 <html>
 <head>
     <title>Admin Page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -40,31 +41,6 @@
     </div>
 </nav>
 <div class="container mt-5">
-    <form class = "create">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Create</h5>
-        </div>
-        <div class="modal-body">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                <label class="form-check-label" for="defaultCheck1">
-                    Checkbox 1
-                </label>
-            </div>
-            <div class="mb-3">
-                <label for="recipient-name" class="col-form-label">Name:</label>
-                <input type="text" class="form-control input-name" id="recipient-name">
-            </div>
-            <div class="mb-3">
-                <label for="recipient-name" class="col-form-label">Password:</label>
-                <input type="text" class="form-control input-password" id="recipient-name">
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Send message</button>
-        </div>
-    </form>
     <h1 class="mb-4">Admin Page</h1>
     <table class="table">
         <thead>
@@ -88,10 +64,11 @@
                 <td><%= user.deletionDate %></td>
                 <td><%= user.admin %></td>
                 <td>
-                    <button type="button" data-edit = "<%= JSON.stringify(user)%>" class="btn edit btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" data-edit="<%= JSON.stringify(user) %>" class="btn edit btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Edit
                     </button>
-                    <button type="button" data-edit = "<%= JSON.stringify(user)%>" class="btn edit btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" data-edit="<%= JSON.stringify(user) %>" class="btn delete btn-primary">
                         Delete
                     </button>
                 </td>
@@ -117,6 +94,10 @@
                             <label for="recipient-name" class="col-form-label">Password</label>
                             <input type="text" class="form-control username-password" id="recipient-name">
                         </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="edit-admin" id="subscribe" name="subscribe">
+                            <label class="form-check-label" for="subscribe">Subscribe to Newsletter</label>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -127,12 +108,51 @@
         </div>
     </div>
 
-    <a href="/admin/new" class="btn btn-success">New User</a>
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Form Dialog</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" class="form-control create-username" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Password:</label>
+                            <input type="text" class="form-control create-password" id="name" name="name" required>
+                        </div>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input create-admin" id="subscribe"
+                                   name="subscribe">
+                            <label class="form-check-label" for="subscribe">Subscribe to Newsletter</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn create-submit btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button href="/admin/new" class="btn create-btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+        New User
+    </button>
 </div>
 </body>
 
 <script>
     let a = '<%- JSON.stringify(users) %>'
+
+    let checked = false
     console.log(a)
     console.log(JSON.parse(a))
     for (let i = 0; i < Array.from(document.querySelectorAll(".edit")).length; i++) {
@@ -151,16 +171,68 @@
                         id: JSON.parse(event.target.dataset.edit)._id,
                         password: document.querySelector(".username-password").value,
                         username: document.querySelector(".username-edit").value,
+                        admin: checked,
                     }) // Convert JavaScript object to JSON string
                 };
 
                 // Make the fetch request
                 fetch("http://localhost:3000/admin", options)
                     .then(response => {
-                        console.log(response)
+                        location.reload();
                     })
+            })
+
+
+            document.querySelector(".edit-admin").addEventListener("change", (event) => {
+                console.log(event.target.checked)
+                checked = event.target.checked
             })
         })
     }
+    for (let i = 0; i < Array.from(document.querySelectorAll(".delete")).length; i++) {
+        Array.from(document.querySelectorAll(".delete"))[i].addEventListener("click", async (event) => {
+            console.log(JSON.parse(event.target.dataset.edit))
+            const options = {
+                method: 'delete',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: JSON.parse(event.target.dataset.edit)._id,
+                }) // Convert JavaScript object to JSON string
+            };
+
+            // Make the fetch request
+            fetch("http://localhost:3000/admin", options)
+                .then(response => {
+                    location.reload();
+                })
+        })
+    }
+    document.querySelector(".create-btn").addEventListener("click", async () => {
+        const input = document.querySelector(".create-username")
+        const password = document.querySelector(".create-password")
+        let checked = false
+        document.querySelector(".create-admin").addEventListener("change", (event) => {
+            checked = event.target.checked
+            console.log(checked)
+        })
+
+
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                password: document.querySelector(".create-password").value,
+                username: document.querySelector(".create-username").value,
+                admin: checked,
+            })
+        };
+        fetch("/create-user", options).then((response) => {
+            location.reload()
+        })
+    })
 </script>
 </html>

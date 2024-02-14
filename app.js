@@ -165,7 +165,21 @@ app.get("/admin", async function (req, res) {
 
 
 app.get("/charts", async (req, res) => {
-    res.render("charts", {})
+    const users = await Auth.find({}).lean();
+
+
+
+
+
+    const history = await History.find({}).lean();
+    const country = await Country.find({}).lean();
+    const userHistory = await UserHistory.find({}).lean()
+    res.render("charts", {
+        users: users,
+        history: history,
+        country: country,
+        userHistory: userHistory
+    })
 })
 
 app.get("/country", async (req, res) => {
@@ -199,67 +213,291 @@ app.get("/pdfdownload", (req, res) => {
 
 
 app.get("/pdfhistory", async (req, res) => {
-    const userHistory = await UserHistory.aggregate([
-        {
-            $match: { userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374") } // Match documents with the specified user ID
-        },
-        {
-            $lookup: {
-                from: 'auths', // Name of the Auth collection in your MongoDB database
-                localField: 'userId',
-                foreignField: 'userID',
-                as: 'user'
+
+
+
+    if (req.query.type == "userHistory") {
+        const userHistory = await UserHistory.aggregate([
+            {
+                $match: {userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374")} // Match documents with the specified user ID
+            },
+            {
+                $lookup: {
+                    from: 'auths', // Name of the Auth collection in your MongoDB database
+                    localField: 'userId',
+                    foreignField: 'userID',
+                    as: 'user'
+                }
+            },
+            {
+                $unwind: '$user' // Convert the 'user' array to object
             }
-        },
-        {
-            $unwind: '$user' // Convert the 'user' array to object
+        ]);
+
+        async function convertEJStoPDF(templatePath, data, outputPath) {
+            try {
+                // Create a new browser instance
+
+                const puppeteer = require("puppeteer")
+                const browser = await puppeteer.launch({
+                    timeout: 0,
+                    protocolTimeout: 0
+                });
+
+                // Create a new page
+                const page = await browser.newPage();
+                page.setDefaultTimeout(0)
+
+
+                page.setDefaultNavigationTimeout(0)
+
+                // Render EJS template
+                const htmlContent = await ejs.renderFile(templatePath, {
+                    userHistory: userHistory
+                });
+
+                // Set the HTML content of the page
+                await page.setContent(htmlContent);
+
+                // Generate PDF
+                await page.pdf({path: outputPath, timeout: 0, format: 'A4'});
+
+                // Close the browser
+                await browser.close();
+
+                console.log(`PDF generated successfully at: ${outputPath}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
         }
-    ]);
-    async function convertEJStoPDF(templatePath, data, outputPath) {
-        try {
-            // Create a new browser instance
 
-            const puppeteer = require("puppeteer")
-            const browser = await puppeteer.launch({
-                timeout: 0,
-                protocolTimeout: 0
-            });
-
-            // Create a new page
-            const page = await browser.newPage();
-            page.setDefaultTimeout(0)
-
-
-
-
-
-
-
-
-
-
-            page.setDefaultNavigationTimeout(0)
-
-            // Render EJS template
-            const htmlContent = await ejs.renderFile(templatePath, {
-                userHistory: userHistory
-            });
-
-            // Set the HTML content of the page
-            await page.setContent(htmlContent);
-
-            // Generate PDF
-            await page.pdf({ path: outputPath, timeout: 0, format: 'A4' });
-
-            // Close the browser
-            await browser.close();
-
-            console.log(`PDF generated successfully at: ${outputPath}`);
-        } catch (error) {
-            console.error('Error:', error);
-        }
+        await convertEJStoPDF("./public/historyUser.ejs", userHistory, "./history.pdf")
     }
-    await convertEJStoPDF("./public/historyUser.ejs", userHistory, "./history.pdf")
+    if (req.query.type == "historyList") {
+        const userHistory = await UserHistory.find({})
+
+        async function convertEJStoPDF(templatePath, data, outputPath) {
+            try {
+                // Create a new browser instance
+
+                const puppeteer = require("puppeteer")
+                const browser = await puppeteer.launch({
+                    timeout: 0,
+                    protocolTimeout: 0
+                });
+
+                // Create a new page
+                const page = await browser.newPage();
+                page.setDefaultTimeout(0)
+
+
+                page.setDefaultNavigationTimeout(0)
+
+                // Render EJS template
+                const htmlContent = await ejs.renderFile(templatePath, {
+                    historyGood: userHistory
+                });
+
+                // Set the HTML content of the page
+                await page.setContent(htmlContent);
+
+                // Generate PDF
+                await page.pdf({path: outputPath, timeout: 0, format: 'A4'});
+
+                // Close the browser
+                await browser.close();
+
+                console.log(`PDF generated successfully at: ${outputPath}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        await convertEJStoPDF("./public/historyGood.ejs", userHistory, "./history.pdf")
+    }
+    if (req.query.type == "historyCount") {
+        const userHistory = await UserHistory.find({
+            type: "history"
+        })
+
+        async function convertEJStoPDF(templatePath, data, outputPath) {
+            try {
+                // Create a new browser instance
+
+                const puppeteer = require("puppeteer")
+                const browser = await puppeteer.launch({
+                    timeout: 0,
+                    protocolTimeout: 0
+                });
+
+                // Create a new page
+                const page = await browser.newPage();
+                page.setDefaultTimeout(0)
+
+
+                page.setDefaultNavigationTimeout(0)
+
+                // Render EJS template
+                const htmlContent = await ejs.renderFile(templatePath, {
+                    userList: userHistory
+                });
+
+                // Set the HTML content of the page
+                await page.setContent(htmlContent);
+
+                // Generate PDF
+                await page.pdf({path: outputPath, timeout: 0, format: 'A4'});
+
+                // Close the browser
+                await browser.close();
+
+                console.log(`PDF generated successfully at: ${outputPath}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        await convertEJStoPDF("./public/historyList.ejs", userHistory, "./history.pdf")
+    }
+    if (req.query.type == "userList") {
+        const userHistory = await Auth.find({})
+
+        async function convertEJStoPDF(templatePath, data, outputPath) {
+            try {
+                // Create a new browser instance
+
+                const puppeteer = require("puppeteer")
+                const browser = await puppeteer.launch({
+                    timeout: 0,
+                    protocolTimeout: 0
+                });
+
+                // Create a new page
+                const page = await browser.newPage();
+                page.setDefaultTimeout(0)
+
+
+                page.setDefaultNavigationTimeout(0)
+
+                // Render EJS template
+                const htmlContent = await ejs.renderFile(templatePath, {
+                    userList: userHistory
+                });
+
+                // Set the HTML content of the page
+                await page.setContent(htmlContent);
+
+                // Generate PDF
+                await page.pdf({path: outputPath, timeout: 0, format: 'A4'});
+
+                // Close the browser
+                await browser.close();
+
+                console.log(`PDF generated successfully at: ${outputPath}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        await convertEJStoPDF("./public/userList.ejs", userHistory, "./history.pdf")
+    }
+    if (req.query.type == "countryCount") {
+        const userHistory = await UserHistory.find({type: "country"})
+
+        async function convertEJStoPDF(templatePath, data, outputPath) {
+            try {
+                // Create a new browser instance
+
+                const puppeteer = require("puppeteer")
+                const browser = await puppeteer.launch({
+                    timeout: 0,
+                    protocolTimeout: 0
+                });
+
+                // Create a new page
+                const page = await browser.newPage();
+                page.setDefaultTimeout(0)
+
+
+                page.setDefaultNavigationTimeout(0)
+
+                // Render EJS template
+                const htmlContent = await ejs.renderFile(templatePath, {
+                    countryList: userHistory
+                });
+
+                // Set the HTML content of the page
+                await page.setContent(htmlContent);
+
+                // Generate PDF
+                await page.pdf({path: outputPath, timeout: 0, format: 'A4'});
+
+                // Close the browser
+                await browser.close();
+
+                console.log(`PDF generated successfully at: ${outputPath}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        await convertEJStoPDF("./public/countryList.ejs", userHistory, "./history.pdf")
+    }
+    if (req.query.type == "charts") {
+        const users = await Auth.find({}).lean();
+
+
+
+
+
+        const history = await History.find({}).lean();
+        const country = await Country.find({}).lean();
+        const userHistory = await UserHistory.find({}).lean()
+
+        async function convertEJStoPDF(templatePath, data, outputPath) {
+            try {
+                // Create a new browser instance
+
+                const puppeteer = require("puppeteer")
+                const browser = await puppeteer.launch({
+                    timeout: 0,
+                    protocolTimeout: 0
+                });
+
+                // Create a new page
+                const page = await browser.newPage();
+                page.setDefaultTimeout(0)
+
+
+                page.setDefaultNavigationTimeout(0)
+
+                // Render EJS template
+                const htmlContent = await ejs.renderFile(templatePath, {
+                    users: users,
+                    history: history,
+                    country: country,
+                    userHistory: userHistory
+                });
+
+                // Set the HTML content of the page
+                await page.setContent(htmlContent);
+
+                await new Promise(r => setTimeout(r, 2000));
+
+                // Generate PDF
+                await page.pdf({path: outputPath, timeout: 0, format: 'A4'});
+
+                // Close the browser
+                await browser.close();
+
+                console.log(`PDF generated successfully at: ${outputPath}`);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        await convertEJStoPDF("./public/charts.ejs", userHistory, "./history.pdf")
+    }
     res.sendFile(__dirname + "/history.pdf")
 })
 app.get("/historyUser", async (req, res) => {
@@ -366,6 +604,7 @@ app.delete("/admin", async function (req, res) {
         let allUsers = await Auth.deleteOne({
             _id: req.body.id,
         });
+        res.json("hello")
     } catch (err) {
         console.error('Error reading users:', err);
         res.status(500).send('Internal Server Error');
