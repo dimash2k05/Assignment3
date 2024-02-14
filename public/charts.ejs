@@ -104,6 +104,7 @@
         chart: {
             type: 'pie'
         },
+        labels: ["Всего данных по истории"],
         series: [history.length]
     });
     const commonData = new ApexCharts(document.querySelector("#commonData"), {
@@ -139,6 +140,7 @@
         chart: {
             type: 'pie'
         },
+        labels: ["Количество игр по стране"],
         series: [userHistory.filter((item) => {
             return item.type == "country" || item.type == "history"
         }).length]
@@ -158,12 +160,14 @@
         chart: {
             type: 'pie'
         },
+        labels: ["Всего играли"],
         series: [country.length]
     });
     const historyCount = new ApexCharts(document.querySelector("#historyCount"), {
         chart: {
             type: 'pie'
         },
+        labels: ["Всего игр я по истории"],
         series: [history.length]
     });
 

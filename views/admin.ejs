@@ -20,22 +20,25 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/history">1 game<span class="sr-only"></span></a>
+                <a class="nav-link" href="/history"><%= translate.game1 %><span class="sr-only"></span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="/historyUser"><%= translate.historyUser %><span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/country">2 game</a>
+                <a class="nav-link" href="/country"><%= translate.game2 %></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/admin">Admin panel</a>
+                <a class="nav-link" href="/admin"><%= translate.admin %></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/charts">Charts</a>
+                <a class="nav-link" href="/charts"><%= translate.charts %></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/historyUser">History</a>
+                <a class="nav-link" href="/pdfdownload"><%= translate.pdfdownload %></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/pdfdownload">Pdf history</a>
+                <a class="nav-link" href="/translate">Translate</a>
             </li>
         </ul>
     </div>
@@ -96,7 +99,7 @@
                         </div>
                         <div class="form-group form-check">
                             <input type="checkbox" class="edit-admin" id="subscribe" name="subscribe">
-                            <label class="form-check-label" for="subscribe">Subscribe to Newsletter</label>
+                            <label class="form-check-label" for="subscribe">Admin</label>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -131,7 +134,7 @@
                         <div class="form-group form-check">
                             <input type="checkbox" class="form-check-input create-admin" id="subscribe"
                                    name="subscribe">
-                            <label class="form-check-label" for="subscribe">Subscribe to Newsletter</label>
+                            <label class="form-check-label" for="subscribe">admin</label>
                         </div>
                     </form>
                 </div>
@@ -143,14 +146,18 @@
         </div>
     </div>
 
-    <button href="/admin/new" class="btn create-btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
+    <button class="btn create-btn btn-success" data-bs-toggle="modal" data-bs-target="#createModal">
         New User
     </button>
 </div>
 </body>
 
 <script>
-    let a = '<%- JSON.stringify(users) %>'
+   /* if (JSON.parse(localStorage.getItem("user")).admin == false) {
+        window.location.href = "/charts"
+        alert("Вы не админ")
+    }*/
+    let a = '<%- JSON.stringify(users) %>';
 
     let checked = false
     console.log(a)
@@ -171,7 +178,7 @@
                         id: JSON.parse(event.target.dataset.edit)._id,
                         password: document.querySelector(".username-password").value,
                         username: document.querySelector(".username-edit").value,
-                        admin: checked,
+                        admin: document.querySelector(".edit-admin").checked
                     }) // Convert JavaScript object to JSON string
                 };
 
@@ -219,19 +226,39 @@
         })
 
 
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                password: document.querySelector(".create-password").value,
-                username: document.querySelector(".create-username").value,
-                admin: checked,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        document.querySelector(".create-submit").addEventListener("click", async () => {
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    password: document.querySelector(".create-password").value,
+                    username: document.querySelector(".create-username").value,
+                    admin: document.querySelector(".create-admin").checked
+                })
+            };
+            fetch("/create-user", options).then((response) => {
+                location.reload()
             })
-        };
-        fetch("/create-user", options).then((response) => {
-            location.reload()
         })
     })
 </script>

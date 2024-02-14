@@ -8,6 +8,53 @@ const axios = require("axios")
 const app = express();
 app.set('view engine', 'ejs');
 
+
+
+
+
+
+
+
+
+
+let active = "en"
+
+
+let translate = {
+
+
+
+
+
+
+
+
+    "en": {
+        "userList": "List of users",
+        "historyUser": "history",
+        "historyList": "history list",
+        "statistics": "statistics",
+        "countGames": "Count games",
+        "admin": "Admin dashboard",
+        "game1": "first game",
+        "game2": "second game",
+        "pdfdownload": "pdfdownload"
+    },
+    "ru": {
+        "userList": "Количество пользователей",
+        "historyUser": "История",
+        "historyList": "Всего данных по Истории",
+        "statistics": "Статистика",
+        "countGames": "Количество Ваших игр",
+        "admin": "Управление админами",
+        "game1": "Первая игра",
+        "game2": "Вторая игра",
+        "pdfdownload": "pdfdownload"
+    }
+}
+
+
+
 const ejs = require("ejs")
 
 require("web-streams-polyfill")
@@ -126,25 +173,29 @@ app.post("/auth", async function (req, res) {
         });
 
         if (foundItems.length > 0) {
-            res.render("historyUser", {auth: false});
+            const founded = foundItems[0]._id
+                res.json("error")
         } else {
             const newUser = new Auth(req.body);
             newUser.creationDate = new Date();
             newUser.updateDate = new Date();
             newUser.admin = false;
             console.log(JSON.stringify(newUser))
+            let id = new mongoose.mongo.ObjectId()
             await Auth.create({
                 username: req.body.name,
                 password: req.body.password,
-                userID: new mongoose.mongo.ObjectId(),
+                userID: id,
                 creationDate: new Date(),
                 updateDate: new Date(),
                 deletionDate: new Date(),
                 admin: false
             });
             console.log("User created successfully");
-            const result = await Auth.find().lean();
-            res.render("admin", {users: result});
+            const result = await Auth.find({
+                userID: id
+            }).lean();
+            res.json(result)
         }
     } catch (err) {
         console.error('Error creating user:', err);
@@ -153,10 +204,40 @@ app.post("/auth", async function (req, res) {
 });
 
 
+
+
+
+
+
+
+
+
+app.get("/translate", async (req, res) => {
+    if (active == "ru") {
+        active = "en"
+    } else {
+        active = "ru"
+    }
+    const users = await Auth.find({}).lean();
+
+
+    const history = await History.find({}).lean();
+    const country = await Country.find({}).lean();
+    const userHistory = await UserHistory.find({}).lean()
+    res.render("charts", {
+        users: users,
+        history: history,
+        country: country,
+        userHistory: userHistory,
+        translate: translate[active]
+    })
+})
+
+
 app.get("/admin", async function (req, res) {
     try {
         const allUsers = await Auth.find().lean();
-        res.render("admin", {users: allUsers});
+        res.render("admin", {users: allUsers, translate: translate[active]});
     } catch (err) {
         console.error('Error reading users:', err);
         res.status(500).send('Internal Server Error');
@@ -168,9 +249,6 @@ app.get("/charts", async (req, res) => {
     const users = await Auth.find({}).lean();
 
 
-
-
-
     const history = await History.find({}).lean();
     const country = await Country.find({}).lean();
     const userHistory = await UserHistory.find({}).lean()
@@ -178,7 +256,8 @@ app.get("/charts", async (req, res) => {
         users: users,
         history: history,
         country: country,
-        userHistory: userHistory
+        userHistory: userHistory,
+        translate: translate[active]
     })
 })
 
@@ -203,17 +282,19 @@ app.get("/country", async (req, res) => {
     res.render("country", {
 
 
-        countryGuess: result.data
+        countryGuess: result.data,
+        translate: translate[active]
     })
 })
 
 app.get("/pdfdownload", (req, res) => {
-    res.render("pdfdownload", {})
+    res.render("pdfdownload", {
+        translate: translate[active]
+    })
 })
 
 
 app.get("/pdfhistory", async (req, res) => {
-
 
 
     if (req.query.type == "userHistory") {
@@ -253,7 +334,8 @@ app.get("/pdfhistory", async (req, res) => {
 
                 // Render EJS template
                 const htmlContent = await ejs.renderFile(templatePath, {
-                    userHistory: userHistory
+                    userHistory: userHistory,
+                    translate: translate[active]
                 });
 
                 // Set the HTML content of the page
@@ -295,7 +377,8 @@ app.get("/pdfhistory", async (req, res) => {
 
                 // Render EJS template
                 const htmlContent = await ejs.renderFile(templatePath, {
-                    historyGood: userHistory
+                    historyGood: userHistory,
+                    translate: translate[active]
                 });
 
                 // Set the HTML content of the page
@@ -339,7 +422,8 @@ app.get("/pdfhistory", async (req, res) => {
 
                 // Render EJS template
                 const htmlContent = await ejs.renderFile(templatePath, {
-                    userList: userHistory
+                    userList: userHistory,
+                    translate: translate[active]
                 });
 
                 // Set the HTML content of the page
@@ -381,7 +465,8 @@ app.get("/pdfhistory", async (req, res) => {
 
                 // Render EJS template
                 const htmlContent = await ejs.renderFile(templatePath, {
-                    userList: userHistory
+                    userList: userHistory,
+                    translate: translate[active]
                 });
 
                 // Set the HTML content of the page
@@ -423,7 +508,8 @@ app.get("/pdfhistory", async (req, res) => {
 
                 // Render EJS template
                 const htmlContent = await ejs.renderFile(templatePath, {
-                    countryList: userHistory
+                    countryList: userHistory,
+                    translate: translate[active]
                 });
 
                 // Set the HTML content of the page
@@ -445,9 +531,6 @@ app.get("/pdfhistory", async (req, res) => {
     }
     if (req.query.type == "charts") {
         const users = await Auth.find({}).lean();
-
-
-
 
 
         const history = await History.find({}).lean();
@@ -476,7 +559,8 @@ app.get("/pdfhistory", async (req, res) => {
                     users: users,
                     history: history,
                     country: country,
-                    userHistory: userHistory
+                    userHistory: userHistory,
+                    translate: translate[active]
                 });
 
                 // Set the HTML content of the page
@@ -501,9 +585,10 @@ app.get("/pdfhistory", async (req, res) => {
     res.sendFile(__dirname + "/history.pdf")
 })
 app.get("/historyUser", async (req, res) => {
+    const id = await Auth.find({admin: true}).lean();
     const data = await UserHistory.aggregate([
         {
-            $match: { userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374") } // Match documents with the specified user ID
+            $match: {userId: new mongoose.mongo.ObjectId(id[0].userID)} // Match documents with the specified user ID
         },
         {
             $lookup: {
@@ -519,29 +604,16 @@ app.get("/historyUser", async (req, res) => {
     ]);
     console.log(data)
     res.render("historyUser", {
-        userHistory: data
+        userHistory: data,
+        translate: translate[active]
     })
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 app.get("/historyUser", async (req, res) => {
     const data = await UserHistory.aggregate([
         {
-            $match: { userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374") } // Match documents with the specified user ID
+            $match: {userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374")} // Match documents with the specified user ID
         },
         {
             $lookup: {
@@ -557,7 +629,8 @@ app.get("/historyUser", async (req, res) => {
     ]);
     console.log(data)
     res.render("historyUser", {
-        userHistory: data
+        userHistory: data,
+        translate: translate[active]
     })
 })
 app.get("/history", async (req, res) => {
@@ -577,7 +650,68 @@ app.get("/history", async (req, res) => {
     })
     let resultData = await History.find({}).lean()
     console.log(resultData)
-    res.render("history", {historyEvents: resultData})
+    res.render("history", {historyEvents: resultData, translate: translate[active]})
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.post("/create-user", async (req, res) => {
+
+    await Auth.create({
+        username: req.body.username,
+        password: req.body.password,
+        userID: new mongoose.mongo.ObjectId(),
+        creationDate: new Date(),
+        updateDate: new Date(),
+        deletionDate: new Date(),
+        admin: req.body.admin
+    });
+    res.json("hello")
+    console.log("User created successfully");
 })
 
 
@@ -588,10 +722,11 @@ app.put("/admin", async function (req, res) {
             _id: req.body.id,
         }, {
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            admin: req.body.admin
         });
         let result = await Auth.find({}).lean();
-        res.render("admin", {users: result});
+        res.render("admin", {users: result, translate: translate[active]});
     } catch (err) {
         console.error('Error reading users:', err);
         res.status(500).send('Internal Server Error');
@@ -614,7 +749,7 @@ app.delete("/admin", async function (req, res) {
 app.get("/", async function (req, res) {
     try {
         const allUsers = await Auth.find().lean();
-        res.render("auth", {auth: false, users: allUsers});
+        res.render("auth", {auth: false, translate: translate[active], users: allUsers});
     } catch (err) {
         console.error('Error reading users:', err);
         res.status(500).send('Internal Server Error');
