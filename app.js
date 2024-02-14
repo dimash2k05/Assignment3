@@ -584,7 +584,7 @@ app.get("/historyUser", async (req, res) => {
     const id = await Auth.find({admin: true}).lean();
     const data = await UserHistory.aggregate([
         {
-            $match: {userId: new mongoose.mongo.ObjectId(id[0].userID)} // Match documents with the specified user ID
+            $match: {userId: "65ca58cd9a393dc362913374"} // Match documents with the specified user ID
         },
         {
             $lookup: {
