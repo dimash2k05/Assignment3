@@ -265,7 +265,7 @@ app.get("/country", async (req, res) => {
         }
     })
     await UserHistory.create({
-        userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374"),
+        userId: new mongoose.mongo.ObjectId("65cc9a845c16b8c392371e48"),
         type: "country",
         creationDate: new Date()
     })
@@ -294,22 +294,8 @@ app.get("/pdfhistory", async (req, res) => {
             password: "admin",
             admin: true
         }).lean()
-        const userHistory = await UserHistory.aggregate([
-            {
-                $match: {userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374")} // Match documents with the specified user ID
-            },
-            {
-                $lookup: {
-                    from: 'auths', // Name of the Auth collection in your MongoDB database
-                    localField: 'userId',
-                    foreignField: 'userID',
-                    as: 'user'
-                }
-            },
-            {
-                $unwind: '$user' // Convert the 'user' array to object
-            }
-        ]);
+        const userHistory = await UserHistory.find({
+        });
 
         async function convertEJStoPDF(templatePath, data, outputPath) {
             try {
@@ -327,6 +313,7 @@ app.get("/pdfhistory", async (req, res) => {
 
 
                 page.setDefaultNavigationTimeout(0)
+                console.log(userHistory)
 
                 // Render EJS template
                 const htmlContent = await ejs.renderFile(templatePath, {
@@ -372,6 +359,7 @@ app.get("/pdfhistory", async (req, res) => {
                 page.setDefaultNavigationTimeout(0)
 
                 // Render EJS template
+                console.log(userHistory)
                 const htmlContent = await ejs.renderFile(templatePath, {
                     historyGood: userHistory,
                     translate: translate[active]
@@ -581,24 +569,7 @@ app.get("/pdfhistory", async (req, res) => {
     res.sendFile(__dirname + "/history.pdf")
 })
 app.get("/historyUser", async (req, res) => {
-    const id = await Auth.find({admin: true}).lean();
-    const data = await UserHistory.aggregate([
-        {
-            $match: {userId: "65ca58cd9a393dc362913374"} // Match documents with the specified user ID
-        },
-        {
-            $lookup: {
-                from: 'auths', // Name of the Auth collection in your MongoDB database
-                localField: 'userId',
-                foreignField: 'userID',
-                as: 'user'
-            }
-        },
-        {
-            $unwind: '$user' // Convert the 'user' array to object
-        }
-    ]);
-    console.log(data)
+    const data = await UserHistory.find({userId: "65cc9a845c16b8c392371e48"})
     res.render("historyUser", {
         userHistory: data,
         translate: translate[active]
@@ -607,23 +578,7 @@ app.get("/historyUser", async (req, res) => {
 
 
 app.get("/historyUser", async (req, res) => {
-    const data = await UserHistory.aggregate([
-        {
-            $match: {userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374")} // Match documents with the specified user ID
-        },
-        {
-            $lookup: {
-                from: 'auths', // Name of the Auth collection in your MongoDB database
-                localField: 'userId',
-                foreignField: 'userID',
-                as: 'user'
-            }
-        },
-        {
-            $unwind: '$user' // Convert the 'user' array to object
-        }
-    ]);
-    console.log(data)
+   const data = await UserHistory.find({userId: "65cc9a845c16b8c392371e48"})
     res.render("historyUser", {
         userHistory: data,
         translate: translate[active]
@@ -640,7 +595,7 @@ app.get("/history", async (req, res) => {
     })
     await History.insertMany(result.data)
     await UserHistory.create({
-        userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374"),
+        userId: new mongoose.mongo.ObjectId("65cc9a845c16b8c392371e48"),
         type: "history",
         creationDate: new Date()
     })
@@ -662,7 +617,7 @@ app.post("/create-user", async (req, res) => {
         admin: req.body.admin
     });
     await UserHistory.create({
-        userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374"),
+        userId: new mongoose.mongo.ObjectId("65cc9a845c16b8c392371e48"),
         type: "auth",
         creationDate: new Date()
     })

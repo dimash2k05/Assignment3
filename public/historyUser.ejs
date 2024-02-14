@@ -39,8 +39,7 @@
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">номер</th>
-            <th scope="col">Username</th>
+           
             <th scope="col">Тип</th>
             <th scope="col">Время</th>
         </tr>
@@ -48,7 +47,7 @@
         <tbody>
         <% for (let i = 0; i < userHistory.length; i++) { %>
             <tr>
-                <td><%= userHistory[i].user.username %></td>
+               
                 <td><%= userHistory[i].type %></td>
                 <td><%= userHistory[i].creationDate %></td>
             </tr>
