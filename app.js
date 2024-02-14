@@ -24,7 +24,7 @@ let translate = {
         "admin": "Admin dashboard",
         "game1": "first game",
         "game2": "second game",
-        "charts", "Charts",
+        "charts": "Charts",
         "pdfdownload": "pdfdownload"
     },
     "ru": {
@@ -36,7 +36,7 @@ let translate = {
         "admin": "Управление админами",
         "game1": "Первая игра",
         "game2": "Вторая игра",
-        "charts", "Диаграммы",
+        "charts": "Диаграммы",
         "pdfdownload": "pdfdownload"
     }
 }
