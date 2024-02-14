@@ -295,6 +295,7 @@ app.get("/pdfhistory", async (req, res) => {
             admin: true
         }).lean()
         const userHistory = await UserHistory.find({
+            userId: "65cc9a845c16b8c392371e48"
         });
 
         async function convertEJStoPDF(templatePath, data, outputPath) {
@@ -578,7 +579,7 @@ app.get("/historyUser", async (req, res) => {
 
 
 app.get("/historyUser", async (req, res) => {
-   const data = await UserHistory.find({userId: "65cc9a845c16b8c392371e48"})
+    const data = await UserHistory.find({userId: "65cc9a845c16b8c392371e48"})
     res.render("historyUser", {
         userHistory: data,
         translate: translate[active]
