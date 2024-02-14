@@ -9,24 +9,10 @@ const app = express();
 app.set('view engine', 'ejs');
 
 
-
-
-
-
-
-
-
-
 let active = "en"
 
 
 let translate = {
-
-
-
-
-
-
 
 
     "en": {
@@ -52,7 +38,6 @@ let translate = {
         "pdfdownload": "pdfdownload"
     }
 }
-
 
 
 const ejs = require("ejs")
@@ -174,7 +159,7 @@ app.post("/auth", async function (req, res) {
 
         if (foundItems.length > 0) {
             const founded = foundItems[0]._id
-                res.json(founded)
+            res.json(founded)
         } else {
             res.json("error")
         }
@@ -185,44 +170,30 @@ app.post("/auth", async function (req, res) {
 });
 
 
-
-
-
-
 app.post("/register", async (req, res) => {
     // Create a new user
     let id = new mongoose.mongo.ObjectId()
-        try {
-            await Auth.create({
-                username: req.body.username,
-                password: req.body.password,
-                userID: id,
-                creationDate: new Date(),
-                updateDate: new Date(),
-                deletionDate: new Date(),
-                admin: false
-            });
+    try {
+        await Auth.create({
+            username: req.body.username,
+            password: req.body.password,
+            userID: id,
+            creationDate: new Date(),
+            updateDate: new Date(),
+            deletionDate: new Date(),
+            admin: false
+        });
 
 
-
-
-            let foundedDocument = await Auth.find({
-                userID: id
-            }).lean()
-            res.json(foundedDocument)
-        } catch (err) {
-            console.error('Error creating user:', err);
-            res.status(500).send('Internal Server Error');
-        }
+        let foundedDocument = await Auth.find({
+            userID: id
+        }).lean()
+        res.json(foundedDocument)
+    } catch (err) {
+        console.error('Error creating user:', err);
+        res.status(500).send('Internal Server Error');
+    }
 })
-
-
-
-
-
-
-
-
 
 
 app.get("/translate", async (req, res) => {
@@ -291,6 +262,11 @@ app.get("/country", async (req, res) => {
             'X-Api-Key': 'PLTZf0U4hgA9wCYJkx5fbw==Fb1lDyLYBhRu2vxO'
         }
     })
+    await UserHistory.create({
+        userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374"),
+        type: "country",
+        creationDate: new Date()
+    })
     await Country.insertMany(result.data)
     res.render("country", {
 
@@ -311,6 +287,11 @@ app.get("/pdfhistory", async (req, res) => {
 
 
     if (req.query.type == "userHistory") {
+        const userId = await Auth.find({
+            username: "admin",
+            password: "admin",
+            admin: true
+        }).lean()
         const userHistory = await UserHistory.aggregate([
             {
                 $match: {userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374")} // Match documents with the specified user ID
@@ -667,51 +648,6 @@ app.get("/history", async (req, res) => {
 })
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 app.post("/create-user", async (req, res) => {
 
     await Auth.create({
@@ -723,6 +659,11 @@ app.post("/create-user", async (req, res) => {
         deletionDate: new Date(),
         admin: req.body.admin
     });
+    await UserHistory.create({
+        userId: new mongoose.mongo.ObjectId("65ca58cd9a393dc362913374"),
+        type: "auth",
+        creationDate: new Date()
+    })
     res.json("hello")
     console.log("User created successfully");
 })
