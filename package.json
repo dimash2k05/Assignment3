@@ -1,5 +1,5 @@
 {
-  "name": "zhandos",
+  "name": "dimash",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -7,7 +7,7 @@
     "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "zhandos",
+  "author": "dimash",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
