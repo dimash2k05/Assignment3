@@ -17,15 +17,15 @@ let translate = {
 
     "en": {
         "userList": "List of users",
-        "historyUser": "history",
-        "historyList": "history list",
-        "statistics": "statistics",
+        "historyUser": "History",
+        "historyList": "History list",
+        "statistics": "Statistics",
         "countGames": "Count games",
         "admin": "Admin dashboard",
-        "game1": "first game",
-        "game2": "second game",
+        "game1": "First game",
+        "game2": "Second game",
         "charts": "Charts",
-        "pdfdownload": "pdfdownload"
+        "pdfdownload": "Download"
     },
     "ru": {
         "userList": "Количество пользователей",
@@ -37,7 +37,7 @@ let translate = {
         "game1": "Первая игра",
         "game2": "Вторая игра",
         "charts": "Диаграммы",
-        "pdfdownload": "pdfdownload"
+        "pdfdownload": "Скачать"
     }
 }
 
