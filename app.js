@@ -174,16 +174,27 @@ app.post("/auth", async function (req, res) {
 
         if (foundItems.length > 0) {
             const founded = foundItems[0]._id
-                res.json("error")
+                res.json(founded)
         } else {
-            const newUser = new Auth(req.body);
-            newUser.creationDate = new Date();
-            newUser.updateDate = new Date();
-            newUser.admin = false;
-            console.log(JSON.stringify(newUser))
-            let id = new mongoose.mongo.ObjectId()
+            res.json("error")
+        }
+    } catch (err) {
+        console.error('Error creating user:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+
+
+
+
+app.post("/register", async (req, res) => {
+    // Create a new user
+    let id = new mongoose.mongo.ObjectId()
+        try {
             await Auth.create({
-                username: req.body.name,
+                username: req.body.username,
                 password: req.body.password,
                 userID: id,
                 creationDate: new Date(),
@@ -191,17 +202,19 @@ app.post("/auth", async function (req, res) {
                 deletionDate: new Date(),
                 admin: false
             });
-            console.log("User created successfully");
-            const result = await Auth.find({
+
+
+
+
+            let foundedDocument = await Auth.find({
                 userID: id
-            }).lean();
-            res.json(result)
+            }).lean()
+            res.json(foundedDocument)
+        } catch (err) {
+            console.error('Error creating user:', err);
+            res.status(500).send('Internal Server Error');
         }
-    } catch (err) {
-        console.error('Error creating user:', err);
-        res.status(500).send('Internal Server Error');
-    }
-});
+})
 
 
 

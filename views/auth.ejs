@@ -116,7 +116,7 @@
                 }
             }).then((result) => {
                 if (JSON.parse(result) == "error") {
-                    alert("Account exist")
+                    alert("Account does i exist")
                     return;
                 }
                 localStorage.setItem("user", JSON.stringify(JSON.parse(result)[0]))
